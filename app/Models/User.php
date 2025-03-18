@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'apellidos',
         'telefono',
+        'ciclo_formativo_id'
     ];
 
     /**
