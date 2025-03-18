@@ -5,17 +5,22 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AcuerdoResource\Pages;
 use App\Filament\Resources\AcuerdoResource\RelationManagers;
 use App\Models\Acuerdo;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
+use Form\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 class AcuerdoResource extends Resource
 {
@@ -30,15 +35,23 @@ class AcuerdoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('acuerdo_numero')
 
-                    ->required(),
                 Select::make('centro_educativo_id')
                     ->relationship('centro_educativo','nombre')
                     ->required(),
+                   /* ->afterStateUpdated(function(string $operation, $state, Forms\Set $set){
+                                if($operation != 'create'){
+                                    return;
+                                }
+                                $set('acuerdo_numero','vasco'.' '.Str::slug($state));
+                            }),*/
                 Select::make('empresa_id')
                     ->relationship('empresa','nombre')
                     ->unique(ignoreRecord: true)
+                    ->live(onBlur:true)
+                    ->afterStateUpdated(function(string $operation, $state, Forms\Set $set,Get $get){
+                        $set('acuerdo_numero','vasco'.' - '.Str::slug($state).' - '.Carbon::parse(Str::slug($get('acuerdo_fecha')))->year);                        }
+                    )
                     ->required(),
                 Select::make('seguridad_social')
                     ->options([
@@ -47,7 +60,17 @@ class AcuerdoResource extends Resource
                     ])
                     ->required(),
                 Forms\Components\DatePicker::make('acuerdo_fecha')
+                ->live(onBlur:true)
+                ->afterStateUpdated(function(string $operation, $state, Forms\Set $set,Get $get){
+                    $set('acuerdo_numero','vasco'.' - '.Str::slug($get('empresa_id')).' - '.Carbon::parse(Str::slug($state))->year);
+                })
                     ->required(),
+
+                    Forms\Components\TextInput::make('acuerdo_numero')
+                    ->disabled()
+                    ->dehydrated()
+                    ->required()
+                    ->unique(Acuerdo::class,'acuerdo_numero',ignoreRecord: true),
             ]);
     }
 
