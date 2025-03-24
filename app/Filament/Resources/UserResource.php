@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -47,8 +48,11 @@ class UserResource extends Resource
                     ->password()
                     ->required()
                     ->maxLength(255),
+                Select::make('ciclo_formativo_id')
+                ->label('Tutor ffe del ciclo formativo')
+                    ->relationship('ciclo_formativo','nombre')
+                    ->required()
                 ])->columns(5),
-
             ]);
     }
 
@@ -63,6 +67,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('telefono')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('ciclo_formativo.nombre')
+                ->label('Tutor ffe del ciclo formativo')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

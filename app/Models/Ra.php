@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ra extends Model
 {
@@ -15,4 +17,13 @@ class Ra extends Model
     {
         return $this->belongsTo(Modulo::class);
     }
+
+   /* public function plan_formativo(){
+
+        $this->belongsToMany(Plan_formativo::class);
+
+    }*/
+  /* public function plan_formativo():HasMany{
+        return $this->hasMany(Plan_formativo::class);
+    }*/
 }

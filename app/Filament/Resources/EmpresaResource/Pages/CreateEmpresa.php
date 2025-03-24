@@ -13,4 +13,5 @@ class CreateEmpresa extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
 }

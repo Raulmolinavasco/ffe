@@ -25,4 +25,9 @@ class Centro_educativo extends Model
     {
         return $this->Hasmany(Acuerdo::class);
     }
+
+    public function plan_formativos()
+    {
+        return $this->Hasmany(Plan_formativo::class);
+    }
 }

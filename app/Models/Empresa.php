@@ -25,4 +25,8 @@ class Empresa extends Model
     {
         return $this->hasOne(Acuerdo::class);
     }
+    public function Plan_formativos()
+{
+    return $this->hasMany(Plan_formativo::class);
+}
 }

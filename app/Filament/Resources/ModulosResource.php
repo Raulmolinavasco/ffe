@@ -35,7 +35,10 @@ class ModulosResource extends Resource
                     ->label('Descripción'),
                 Select::make('curso_id')
                 ->relationship('curso','nombre')
-                ->required()
+                ->required(),
+                Forms\Components\TextInput::make('codigo')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -46,6 +49,9 @@ class ModulosResource extends Resource
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('curso.nombre')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('codigo')
                     ->searchable(),
             ])
             ->filters([

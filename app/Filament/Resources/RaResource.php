@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -48,6 +49,7 @@ class RaResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('modulo.nombre')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('descripcion')
                     ->numeric()
@@ -63,7 +65,7 @@ class RaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('modulo.nombre')->label('Modulo'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -41,6 +41,14 @@ class CicloFormativoResource extends Resource
                 ->relationship('departamento','nombre')
                 ->preload()
                 ->required(),
+                Forms\Components\TextInput::make('codigo')
+                    ->required()
+                    ->maxLength(255),
+                Select::make('grado')
+                ->options([
+                    'D' => 'D',
+                    'E' => 'E',
+                ])->default('E'),
                 //
             ]);
     }

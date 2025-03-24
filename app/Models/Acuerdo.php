@@ -23,4 +23,9 @@ public function empresa()
     return $this->belongsTo(Empresa::class);
 }
 
+public function plan_formativo()
+    {
+        return $this->hasOne(Plan_formativo::class);
+    }
+
 }

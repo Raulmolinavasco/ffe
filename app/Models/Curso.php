@@ -24,4 +24,9 @@ public function alumnos()
 {
     return $this->hasMany(Alumno::class);
 }
+
+public function plan_formativos()
+{
+    return $this->hasMany(Plan_formativo::class);
+}
 }

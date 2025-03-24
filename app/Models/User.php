@@ -48,4 +48,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function plan_formativos()
+{
+    return $this->hasMany(Plan_formativo::class);
+}
+    public function ciclo_formativo()
+{
+    return $this->belongsTo(Ciclo_formativo::class);
+}
 }

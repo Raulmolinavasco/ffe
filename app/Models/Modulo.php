@@ -10,6 +10,7 @@ class Modulo extends Model
         'nombre',
         'descripcion',
         'curso_id',
+        'codigo'
     ];
     public function curso()
     {
