@@ -273,12 +273,18 @@ class PlanformativoController extends Controller
                     $planformativoId = $planformativo[0]->id;
                     $raId = $dato->id;
                     $planformativora = Plan_formativora::where('plan_formativo_id', $planformativoId)->where('ra_id', $raId)->get();
+                    //dd($planformativora[0]->centro);
                     if ($planformativora->isEmpty()) {
                         $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('■', [], ['alignment' => 'center']);
                         $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('□', [], ['alignment' => 'center']);
                     } else {
-                        $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('□', [], ['alignment' => 'center']);
+                        if($planformativora[0]->centro == "1"){
                         $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('■', [], ['alignment' => 'center']);
+                        $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('■', [], ['alignment' => 'center']);
+                        }else{
+                            $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('□', [], ['alignment' => 'center']);
+                            $nestedTable->addCell(24, ['valign' => 'center', 'alignment' => Jc::CENTER])->addText('■', [], ['alignment' => 'center']);
+                        }
                     }
                 }
             }

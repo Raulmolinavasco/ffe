@@ -34,6 +34,11 @@ class Plan_formativo extends Model
         'fecha_firma',
     ];
 
+    protected $casts = [
+        'autorizacion_extras' => 'array',
+    ];
+
+
     public function curso()
     {
         return $this->belongsTo(Curso::class);

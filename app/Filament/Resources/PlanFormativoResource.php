@@ -13,6 +13,7 @@ use App\Models\Plan_formativo;
 use App\Models\Ra;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -118,7 +119,19 @@ class PlanFormativoResource extends Resource
                     Select::make('modulo_id')
                     ->label('Modulo')
                     ->reactive()
-                    ->options(fn (callable $get) => Modulo::query()->where('curso_id',$get('../../curso_id'))->pluck('nombre','id'))
+                    ->options(function(callable $get){
+
+                        //$modulo = Modulo::query()->where('curso_id',$get('../../curso_id'))->pluck('nombre','id','curso_id');
+                        $cicloformativoid = Curso::query()->where('id',$get('../../curso_id'))->pluck('id');
+                        $cursos = Curso::query()->where('ciclo_formativo_id',$cicloformativoid)->pluck('id');
+
+                        $modulos = Modulo::query()->wherein('curso_id',$cursos)->pluck('nombre','id');
+
+
+                        return $modulos;
+                    }
+                        //fn (callable $get) => Modulo::query()->where('curso_id',$get('../../curso_id'))->pluck('nombre','id')
+                        )
                     ->searchable(),
                     Select::make('ra_id')
                     ->label('Resultados de aprendizaje')
@@ -127,6 +140,8 @@ class PlanFormativoResource extends Resource
                        //Ra::All()->pluck('nombre','id')
                     )
                     ->searchable(),
+                    Checkbox::make('centro')
+                    ->label('comparte RA con el centro educativo'),
                 ])
                 ->collapsible()
                 ->defaultItems(3),
