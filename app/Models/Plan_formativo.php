@@ -31,6 +31,7 @@ class Plan_formativo extends Model
         'jornada',
         'formacion_especifica',
         'descripcion_formacion_especifica',
+        'fecha_firma',
     ];
 
     public function curso()

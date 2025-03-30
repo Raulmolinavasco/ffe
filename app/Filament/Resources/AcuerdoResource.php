@@ -36,6 +36,10 @@ class AcuerdoResource extends Resource
         return $form
             ->schema([
 
+                Forms\Components\TextInput::make('acuerdo_numero')
+                    ->unique()
+                    ->required(),
+
                 Select::make('centro_educativo_id')
                     ->relationship('centro_educativo','nombre')
                     ->required(),
@@ -66,11 +70,11 @@ class AcuerdoResource extends Resource
                 })
                     ->required(),
 
-                    Forms\Components\TextInput::make('acuerdo_numero')
+                 /*   Forms\Components\TextInput::make('acuerdo_numero')
                     ->disabled()
                     ->dehydrated()
                     ->required()
-                    ->unique(Acuerdo::class,'acuerdo_numero',ignoreRecord: true),
+                    ->unique(Acuerdo::class,'acuerdo_numero',ignoreRecord: true),*/
             ]);
     }
 
@@ -108,6 +112,7 @@ class AcuerdoResource extends Resource
                 ->icon('heroicon-m-pencil-square')
                 ->color('info')
                 ->button(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

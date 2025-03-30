@@ -10,5 +10,6 @@ Route::get('/', function () {
 });
 Route::get('/acuerdo/{record}', [AcuerdoController::class, 'acuerdo'])->name('acuerdo');
 Route::get('/planformativo/{record}', [PlanformativoController::class, 'planformativo'])->name('planformativo');
+Route::get('/relacion/{record}', [PlanformativoController::class, 'relacion'])->name('relacion');
 
 

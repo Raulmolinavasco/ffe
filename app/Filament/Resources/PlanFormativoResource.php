@@ -191,6 +191,8 @@ class PlanFormativoResource extends Resource
                 ->default('Sin formacion especifica')
                 ->hidden(fn (Get $get) => $get('formacion_especifica') !== 'Si'),
 
+                Forms\Components\DatePicker::make('fecha_firma')
+                ->required(),
             ]);
 
     }
@@ -215,6 +217,11 @@ class PlanFormativoResource extends Resource
                 Tables\Actions\DeleteAction::make(),
                 Action::make('Plan formativo')
                 ->url(fn($record):string => route('planformativo',$record))
+                ->icon('heroicon-m-pencil-square')
+                ->color('info')
+                ->button(),
+                Action::make('Relacion Alumnos')
+                ->url(fn($record):string => route('relacion',$record))
                 ->icon('heroicon-m-pencil-square')
                 ->color('info')
                 ->button(),
