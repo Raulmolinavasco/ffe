@@ -12,7 +12,6 @@ use App\Models\Modulo;
 use App\Models\Plan_formativo;
 use App\Models\Ra;
 use App\Models\User;
-use Filament\Tables\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -21,6 +20,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -55,6 +56,7 @@ class PlanFormativoResource extends Resource
                 ->required(),
 
                 Select::make('curso_id')
+                ->label('Curso del alumno')
                 ->relationship('curso','nombre')
                 ->reactive()
                 ->live()
@@ -62,14 +64,17 @@ class PlanFormativoResource extends Resource
 
 
                 Select::make('centro_educativo_id')
+                ->label ('Centro educativo')
                 ->relationship('centro_educativo','nombre')
                 ->required(),
 
                 Select::make('user_id')
+                ->label('Profesor tutor ffe')
                 ->options(fn(Get $get):Collection => User::query()->where('ciclo_formativo_id',Curso::query()->where('id',$get('curso_id'))->pluck('ciclo_formativo_id')->toArray())->pluck(DB::raw("CONCAT(name, ' ', apellidos) As nombre"),"id"))
                 ->required(),
 
                 Select::make('alumno_id')
+                ->label('Alumno')
                ->options(function(Get $get):Collection {
                  $nombreapellidos = Alumno::query()->where('curso_id',$get('curso_id'))->pluck(DB::raw("CONCAT(nombre, ' ', apellidos) As nombre"),"id");
                  return $nombreapellidos;
@@ -77,6 +82,7 @@ class PlanFormativoResource extends Resource
                ->unique(ignoreRecord: true)
                 ->required(),
                 Select::make('exencion_parcial')
+                ->label('Exención parcial')
                 ->options([
                     'Si' => 'Si',
                     'No' => 'No'
@@ -84,10 +90,12 @@ class PlanFormativoResource extends Resource
                 ->dehydrated()
                 ->live(),
                 TextInput::make('horas_exencion_parcial')
+                ->label('Numero de horas de exencion parcial')
                 ->required()
                 ->default('sin exención')
                 ->hidden(fn (Get $get) => $get('exencion_parcial') !== 'Si'),
                 Select::make('realiza_ffe')
+                ->label('Donde realiza las ffe')
                 ->options([
                     'Una empresa' => 'Una empresa',
                     'Varias empresas' => 'Varias empresas'
@@ -95,12 +103,15 @@ class PlanFormativoResource extends Resource
                 ->required(),
 
                 Forms\Components\MarkdownEditor::make('coordinacion_seguimiento')
+                ->label('Coordinación en el seguimiento del alumno')
+                ->default('El seguimiento se hace presencial en la empresa cada semana, conversación telefónica, por la plataforma teams.')
                 ->required(),
                 Select::make('empresa_id')
                 ->relationship('empresa','nombre')
                 ->required(),
 
                 Repeater::make('ras')
+                ->label('Resultados de aprendizaje que dan en la empresa')
                 ->relationship()
                 ->schema([
                     Select::make('modulo_id')
@@ -119,6 +130,7 @@ class PlanFormativoResource extends Resource
                 ->columns(2),
 
                 Select::make('apoyo')
+                ->label('Necesidades de apoyo')
                 ->options([
                     'Si' => 'Si',
                     'No' => 'No'
@@ -127,11 +139,14 @@ class PlanFormativoResource extends Resource
                 ->live()
                 ->required(),
                 Forms\Components\MarkdownEditor::make('especificar_apoyo')
+                ->label('Especificar tipo de apoyo')
                 ->required()
                 ->default('Sin apoyo')
                 ->hidden(fn (Get $get) => $get('apoyo') !== 'Si'),
 
                 Select::make('autorizacion_extras')
+                ->label('Autorizaciones extras')
+                ->multiple()
                 ->options([
                     'No' => 'No',
                     'Turnos' => 'Turnos',
@@ -152,6 +167,7 @@ class PlanFormativoResource extends Resource
                 ->required(),
 
                 Select::make('distribucion')
+                ->label('Distribución de las ffe')
                 ->options([
                     'Semanal' => 'Semanal',
                     'Quincenal' => 'Quincenal',
@@ -160,16 +176,21 @@ class PlanFormativoResource extends Resource
                 ])->default('Quincenal')
                 ->required(),
                 Forms\Components\DatePicker::make('fecha_inicio')
+                ->label('Fecha de Inicio')
                 ->required(),
                 Forms\Components\DatePicker::make('fecha_fin')
+                ->label('Fecha de Finalización')
                 ->required(),
                 Forms\Components\TimePicker::make('hora_inicio')
+                ->label('Hora de entrada')
                 ->seconds(false)
                 ->required(),
                 Forms\Components\TimePicker::make('hora_fin')
+                ->label('Hora de salida')
                 ->seconds(false)
                 ->required(),
                 Select::make('jornada')
+                ->label('Jornada de trabajo')
                 ->options([
                     '6h' => '6h',
                     '7h' => '7h',
@@ -178,6 +199,7 @@ class PlanFormativoResource extends Resource
                 ->required(),
 
                 Select::make('formacion_especifica')
+                ->label('Formación especifica')
                 ->options([
                     'Si' => 'Si',
                     'No' => 'No',
@@ -187,11 +209,13 @@ class PlanFormativoResource extends Resource
                 ->required(),
 
                 Forms\Components\MarkdownEditor::make('descripcion_formacion_especifica')
+                ->label('Descripción de la formación especifica')
                 ->required()
                 ->default('Sin formacion especifica')
                 ->hidden(fn (Get $get) => $get('formacion_especifica') !== 'Si'),
 
                 Forms\Components\DatePicker::make('fecha_firma')
+                ->label('Fecha de firma del plan formativo')
                 ->required(),
             ]);
 
@@ -202,14 +226,20 @@ class PlanFormativoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('alumno.nombre')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('alumno.apellidos')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('empresa.nombre')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('curso_id')
+                ->relationship('curso', 'nombre')
+                ->searchable()
+                ->preload()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -229,6 +259,8 @@ class PlanFormativoResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+
+
                 ]),
             ]);
     }
