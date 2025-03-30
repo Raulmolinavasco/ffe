@@ -23,6 +23,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
@@ -110,7 +111,28 @@ class PlanFormativoResource extends Resource
                 ->relationship('empresa','nombre')
                 ->required(),
 
-                Repeater::make('ras')
+                TableRepeater::make('ras')
+                ->label('Resultados de aprendizaje que dan en la empresa')
+                ->relationship('ras')
+                ->schema([
+                    Select::make('modulo_id')
+                    ->label('Modulo')
+                    ->reactive()
+                    ->options(fn (callable $get) => Modulo::query()->where('curso_id',$get('../../curso_id'))->pluck('nombre','id'))
+                    ->searchable(),
+                    Select::make('ra_id')
+                    ->label('Resultados de aprendizaje')
+                    ->options(
+                        fn (callable $get) => Ra::query()->where('modulo_id',$get('modulo_id'))->pluck('nombre','id')
+                       //Ra::All()->pluck('nombre','id')
+                    )
+                    ->searchable(),
+                ])
+                ->collapsible()
+                ->defaultItems(3),
+
+
+           /*     Repeater::make('ras')
                 ->label('Resultados de aprendizaje que dan en la empresa')
                 ->relationship()
                 ->schema([
@@ -128,6 +150,9 @@ class PlanFormativoResource extends Resource
                     ->searchable(),
                 ])
                 ->columns(2),
+
+*/
+
 
                 Select::make('apoyo')
                 ->label('Necesidades de apoyo')
